@@ -3,25 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Portal de Juegos</title>
+    <title>Mi Portal de Juegos | Gaming Portal</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>🎮 Mi Portal de Juegos</h1>
+    <div class="container">
+        <header>
+            <span class="welcome-tag">BIENVENIDO AL PORTAL</span>
+            <h1>MI PORTAL DE <span class="highlight">JUEGOS</span></h1>
+        </header>
 
-    <div class="game-grid">
-        <!-- Juego: Entity-404 -->
-        <a href="Entity-404/index.html" class="game-card">
-            <div class="game-thumb">👁️</div>
-            <div class="game-title">Entity-404</div>
-        </a>
+        <!-- SECCIÓN DESTACADA (HERO) -->
+        <section class="hero">
+            <div class="hero-bg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <span class="badge badge-terror">TERROR</span>
+                <h2 class="hero-title">Entity-404</h2>
+                
+                <div class="hero-meta">
+                    <span>⭐ 4.7</span>
+                    <span>⏱️ ~30 min</span>
+                </div>
 
-        <!-- Placeholder para futuros juegos -->
-        <div class="game-card" style="opacity: 0.5; cursor: default;">
-            <div class="game-thumb">❓</div>
-            <div class="game-title">Próximamente...</div>
-        </div>
+                <p class="hero-desc">
+                    Algo te observa desde la oscuridad. Un ente sin forma, sin nombre, que existe en los espacios entre lo real y lo imaginado. ¿Podrás escapar?
+                </p>
+
+                <div class="hero-btns">
+                    <a href="Entity-404/index.html" class="btn btn-primary">⚡ JUGAR AHORA</a>
+                    <a href="#" class="btn btn-secondary">VER MÁS</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FILTROS -->
+        <nav class="filters">
+            <button class="filter-btn active">TODOS</button>
+            <button class="filter-btn">TERROR</button>
+            <button class="filter-btn">AVENTURA</button>
+            <button class="filter-btn">PUZZLE</button>
+            <button class="filter-btn">ACCIÓN</button>
+            <button class="filter-btn">INDIE</button>
+        </nav>
+
+        <!-- GRILLA DE JUEGOS -->
+        <main class="game-grid">
+            
+            <!-- Card 1: Entity-404 -->
+            <a href="Entity-404/index.html" class="game-card">
+                <div class="card-thumb" style="background-image: url('Entity-404/villain.jpg.jpeg')">
+                    <span class="card-badge badge-terror">Terror</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-subtitle">Horror Psicológico</div>
+                    <h3 class="card-title">Entity-404</h3>
+                    <p class="card-desc">Sobrevive al laberinto oscuro y encuentra los papeles antes de que él te encuentre.</p>
+                    <div class="tags">
+                        <span class="tag">Horror</span>
+                        <span class="tag">Misterio</span>
+                    </div>
+                    <div class="card-footer">
+                        <span>⭐ 4.7</span>
+                        <span>⏱️ 30 min</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Card 2: Placeholder -->
+            <div class="game-card" style="opacity: 0.7;">
+                <div class="card-thumb" style="background: linear-gradient(45deg, #1a1a2e, #16213e);">
+                    <span class="card-badge" style="background: var(--accent-blue);">Aventura</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-subtitle">Próximamente</div>
+                    <h3 class="card-title">???</h3>
+                    <p class="card-desc">Un nuevo universo de aventuras está siendo construido...</p>
+                    <div class="tags">
+                        <span class="tag">Indie</span>
+                    </div>
+                    <div class="card-footer">
+                        <span>⭐ --</span>
+                        <span>-- min</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Placeholder -->
+            <div class="game-card" style="opacity: 0.7;">
+                <div class="card-thumb" style="background: linear-gradient(45deg, #1a1a2e, #16213e);">
+                    <span class="card-badge" style="background: var(--accent-purple);">Puzzle</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-subtitle">Próximamente</div>
+                    <h3 class="card-title">???</h3>
+                    <p class="card-desc">Desafía tu mente con nuevos retos mentales.</p>
+                    <div class="tags">
+                        <span class="tag">Puzzle</span>
+                    </div>
+                    <div class="card-footer">
+                        <span>⭐ --</span>
+                        <span>-- min</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer>
+            <p>PORTAL.GAMES — Todos los derechos reservados</p>
+            <p style="font-size: 0.7rem; opacity: 0.5;">3 JUEGOS EN DESARROLLO</p>
+        </footer>
     </div>
 
 </body>
