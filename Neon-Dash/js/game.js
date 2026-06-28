@@ -12,10 +12,19 @@ class Game {
         this.player = new Player();
         this.map = new MapData();
         this.enemies = [];
+        this.collectibles = [];
+        this.hazards = [];
         this.camera = { x: 0, y: 0 };
 
         this.keys = {};
         this.initEventListeners();
+        this.syncEntitiesFromMap();
+    }
+
+    syncEntitiesFromMap() {
+        this.enemies = this.map.enemies;
+        this.collectibles = this.map.collectibles;
+        this.hazards = this.map.hazards;
     }
 
     initEventListeners() {
@@ -92,11 +101,11 @@ class Game {
     resetGame() {
         this.player = new Player();
         this.map = new MapData();
-        this.enemies = [];
+        this.syncEntitiesFromMap();
         this.score = 0;
         this.currentLevel = 1;
         this.isRunning = true;
-        document.getElementById('game-over-menu').classList.add('hidden');
+        document.getElementById('game-over-menu').classList.remove('hidden');
         this.gameLoop();
     }
 
@@ -113,6 +122,19 @@ class Game {
         this.enemies.forEach(enemy => {
             enemy.update();
             if (this.rectIntersect(this.player, enemy)) {
+                this.gameOver();
+            }
+        });
+
+        this.collectibles.forEach(item => {
+            if (!item.collected && this.rectIntersect(this.player, item)) {
+                item.collected = true;
+                this.score += item.value;
+            }
+        });
+
+        this.hazards.forEach(hazard => {
+            if (this.rectIntersect(this.player, hazard)) {
                 this.gameOver();
             }
         });
@@ -139,32 +161,62 @@ class Game {
     nextLevel() {
         this.currentLevel++;
         if (this.currentLevel > 10) {
-            alert("¡VICTORIA! Has conquistado el mundo de Neon!");
+            alert("¡VICTORIA! Has conquistado el mundo de Vortex!");
             this.resetGame();
         } else {
             this.map = new MapData(this.currentLevel);
+            this.syncEntitiesFromMap();
             this.player.x = 100;
             this.player.y = 100;
             this.player.vx = 0;
             this.player.vy = 0;
-            this.enemies = this.map.getEnemies();
         }
     }
 
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
+        this.drawBackground();
+
         this.ctx.save();
         this.ctx.translate(-this.camera.x, -this.camera.y);
 
         this.map.draw(this.ctx);
         this.enemies.forEach(e => e.draw(this.ctx));
+        this.collectibles.forEach(c => c.draw(this.ctx));
+        this.hazards.forEach(h => h.draw(this.ctx));
         this.player.draw(this.ctx);
 
         this.ctx.restore();
 
         document.getElementById('score-box').innerText = `Score: ${this.score}`;
         document.getElementById('level-box').innerText = `Level: ${this.currentLevel}`;
+    }
+
+    drawBackground() {
+        const time = Date.now() * 0.001;
+        this.ctx.fillStyle = '#050510';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        for (let i = 0; i < 100; i++) {
+            const x = (Math.sin(i * 123.4) * 0.5 + 0.5) * this.canvas.width;
+            const y = (Math.cos(i * 456.7) * 0.5 + 0.5) * this.canvas.height;
+            const speed = 0.1 + (i % 5) * 0.05;
+            const offset = (this.camera.x * speed) % this.canvas.width;
+            this.ctx.beginPath();
+            this.ctx.arc((x + offset + this.canvas.width) % this.canvas.width, y, 1, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
+
+        const grad = this.ctx.createRadialGradient(
+            this.canvas.width/2 - this.camera.x * 0.2, this.canvas.height/2 - this.camera.y * 0.2, 0,
+            this.canvas.width/2 - this.camera.x * 0.2, this.canvas.height/2 - this.camera.y * 0.2, this.canvas.width
+        );
+        grad.addColorStop(0, 'rgba(188, 19, 254, 0.1)');
+        grad.addColorStop(1, 'transparent');
+        this.ctx.fillStyle = grad;
+        this.ctx.fillRect(0,0, this.canvas.width, this.canvas.height);
     }
 
     gameLoop() {
@@ -304,6 +356,54 @@ class Enemy {
     }
 }
 
+class Collectible {
+    constructor(x, y, value = 10) {
+        this.x = x;
+        this.y = y;
+        this.width = 20;
+        this.height = 20;
+        this.value = value;
+        this.collected = false;
+        this.color = '#ffff00';
+    }
+
+    draw(ctx) {
+        if (this.collected) return;
+        ctx.save();
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x + this.width/2, this.y + this.height/2, this.width/2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+class Hazard {
+    constructor(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.color = '#ff4400';
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.fillStyle = this.color;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.color;
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y + this.height);
+        ctx.lineTo(this.x + this.width / 2, this.y);
+        ctx.lineTo(this.x + this.width, this.y + this.height);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
 class MapData {
     constructor(level = 1) {
         this.tileSize = 50;
@@ -311,6 +411,8 @@ class MapData {
         this.height = 20;
         this.grid = [];
         this.enemies = [];
+        this.collectibles = [];
+        this.hazards = [];
         this.generate(level);
     }
 
@@ -319,28 +421,65 @@ class MapData {
 
         for (let x = 0; x < this.width; x++) {
             this.grid[this.height - 1][x] = 1;
-            if (x > 15 && x < this.width - 15 && Math.random() < 0.1) {
-                let platY = this.height - 4 - Math.floor(Math.random() * 5);
-                if (platY > 5) {
-                    for (let i = 0; i < 3; i++) {
-                        if (x + i < this.width) this.grid[platY][x + i] = 1;
+            
+            if (x > 10 && x < this.width - 10) {
+                const rand = Math.random();
+                if (rand < 0.12) {
+                    let platY = this.height - 4 - Math.floor(Math.random() * 6);
+                    if (platY > 4) {
+                        for (let i = 0; i < 3; i++) {
+                            if (x + i < this.width) this.grid[platY][x + i] = 1;
+                        }
+                    }
+                } else if (rand < 0.18) {
+                    let platY = this.height - 2 - Math.floor(Math.random() * 5);
+                    if (platY > 4) {
+                        for (let i = 0; i < 3; i++) {
+                            if (x + i < this.width) this.grid[platY][x + i] = 1;
+                        }
                     }
                 }
             }
         }
 
         this.grid[this.height - 2][this.width - 2] = 2; 
+        
         this.enemies = this.getEnemies();
+        this.collectibles = this.getCollectibles();
+        this.hazards = this.getHazards();
     }
 
     getEnemies() {
         const enemies = [];
-        for (let i = 0; i < 5 + this.width/10; i++) {
+        const count = 5 + Math.floor(this.width/10);
+        for (let i = 0; i < count; i++) {
             let ex = 200 + Math.random() * (this.width * this.tileSize - 400);
             let ey = (this.height - 3) * this.tileSize;
             enemies.push(new Enemy(ex, ey, 100 + Math.random() * 200));
         }
         return enemies;
+    }
+
+    getCollectibles() {
+        const collectibles = [];
+        const count = 10 + Math.floor(this.width/5);
+        for (let i = 0; i < count; i++) {
+            let cx = 100 + Math.random() * (this.width * this.tileSize - 200);
+            let cy = (this.height - 5 - Math.floor(Math.random() * 10)) * this.tileSize;
+            collectibles.push(new Collectible(cx, cy, 10));
+        }
+        return collectibles;
+    }
+
+    getHazards() {
+        const hazards = [];
+        const count = 5 + Math.floor(this.width/8);
+        for (let i = 0; i < count; i++) {
+            let hx = 300 + Math.random() * (this.width * this.tileSize - 400);
+            let hy = (this.height - 2) * this.tileSize;
+            hazards.push(new Hazard(hx, hy, 40, 20));
+        }
+        return hazards;
     }
 
     isSolid(x, y) {
