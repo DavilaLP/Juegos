@@ -245,6 +245,8 @@ class Player {
     }
 
     update(keys, map, dt) {
+        this.grounded = false;
+
         if (keys['ArrowRight'] || keys['KeyD']) {
             this.vx += this.speed;
         } else if (keys['ArrowLeft'] || keys['KeyA']) {
@@ -273,23 +275,27 @@ class Player {
     checkCollision(map, axis) {
         const tileSize = map.tileSize;
         const left = Math.floor(this.x / tileSize);
-        const right = Math.floor((this.x + this.width) / tileSize);
+        const right = Math.floor((this.x + this.width - 0.1) / tileSize);
         const top = Math.floor(this.y / tileSize);
-        const bottom = Math.floor((this.y + this.height) / tileSize);
+        const bottom = Math.floor((this.y + this.height - 0.1) / tileSize);
 
         for (let row = top; row <= bottom; row++) {
             for (let col = left; col <= right; col++) {
                 if (map.isSolid(col, row)) {
                     if (axis === 'x') {
-                        if (this.vx > 0) this.x = col * tileSize - this.width;
-                        if (this.vx < 0) this.x = (col + 1) * tileSize;
+                        if (this.vx > 0) {
+                            this.x = col * tileSize - this.width;
+                        } else if (this.vx < 0) {
+                            this.x = (col + 1) * tileSize;
+                        }
                         this.vx = 0;
                     } else {
-                        if (this.vy > 0) {
+                        if (this.vy >= 0) {
                             this.y = row * tileSize - this.height;
                             this.grounded = true;
+                        } else {
+                            this.y = (row + 1) * tileSize;
                         }
-                        if (this.vy < 0) this.y = (row + 1) * tileSize;
                         this.vy = 0;
                     }
                 }
