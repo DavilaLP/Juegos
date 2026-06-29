@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zumba Classic - Aventura Tropical</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui-layer">
+            <div id="score-box">Score: 0</div>
+            <div id="level-box">Level: 1</div>
+        </div>
+
+        <div id="start-menu" class="overlay">
+            <h1>ZUMBA CLASSIC</h1>
+            <p>¡Explosión de color y ritmo!</p>
+            <button id="start-btn">¡JUGAR!</button>
+            <div class="instructions">
+                <p>Usa el ratón para apuntar y haz clic para disparar las bolas.</p>
+                <p>¡No dejes que la cadena llegue a la serpiente!</p>
+            </div>
+        </div>
+
+        <div id="game-over-menu" class="overlay hidden">
+            <h1>GAME OVER</h1>
+            <p id="final-score">Score: 0</p>
+            <button id="restart-btn">REINTENTAR</button>
+        </div>
+
+        <div id="mobile-controls" class="hidden">
+            <div id="joystick-container">
+                <div id="move-joystick">
+                    <div id="move-stick"></div>
+                </div>
+            </div>
+            <button id="shoot-btn">¡DISPARAR!</button>
+        </div>
+    </div>
+
+    <audio id="bg-music" loop src="assets/sounds/background_music.mp3"></audio>
+    <audio id="shoot-sound" src="assets/sounds/shoot.mp3"></audio>
+
+    <script src="js/game.js"></script>
+</body>
+</html>
