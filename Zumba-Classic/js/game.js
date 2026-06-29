@@ -10,6 +10,9 @@ class Game {
         this.isGameOver = false;
 
         this.colors = ['#ff3333', '#33ff33', '#3333ff', '#ffff33', '#ff33ff', '#33ffff'];
+        this.colorQueue = []; 
+        this.refillQueue();
+
         this.path = [];
         this.marbles = [];
         this.projectiles = [];
@@ -17,6 +20,12 @@ class Game {
 
         this.initEventListeners();
         this.createPath();
+    }
+
+    refillQueue() {
+        while (this.colorQueue.length < 3) {
+            this.colorQueue.push(this.colors[Math.floor(Math.random() * this.colors.length)]);
+        }
     }
 
     resize() {
@@ -42,7 +51,6 @@ class Game {
         document.getElementById('start-btn').addEventListener('click', () => this.start());
         document.getElementById('restart-btn').addEventListener('click', () => this.reset());
 
-        // Mobile
         const shootBtn = document.getElementById('shoot-btn');
         if (shootBtn) {
             shootBtn.addEventListener('touchstart', (e) => {
@@ -58,7 +66,6 @@ class Game {
         const centerY = this.canvas.height / 2;
         const maxRadius = Math.min(centerX, centerY) - 60;
 
-        // Spiral path logic
         let currentRadius = maxRadius;
         const angleStep = 0.05;
         let currentAngle = 0;
@@ -69,12 +76,12 @@ class Game {
             this.path.push({ x, y });
 
             currentAngle += angleStep;
-            currentRadius -= 0.5; // Tighten the spiral
+            currentRadius -= 0.8; // Increased spacing
         }
-        // Add some randomness to the spiral to make it look "natural"
+        
         for (let i = 0; i < this.path.length; i++) {
-            this.path[i].x += (Math.random() - 0.5) * 10;
-            this.path[i].y += (Math.random() - 0.5) * 10;
+            this.path[i].x += (Math.random() - 0.5) * 15;
+            this.path[i].y += (Math.random() - 0.5) * 15;
         }
     }
 
@@ -93,18 +100,23 @@ class Game {
         this.isGameOver = false;
         this.marbles = [];
         this.projectiles = [];
+        this.colorQueue = [];
+        this.refillQueue();
         this.createPath();
         document.getElementById('game-over-menu').classList.add('hidden');
         document.getElementById('final-score').innerText = `Score: ${this.score}`;
         document.getElementById('score-box').innerText = `Score: 0`;
         document.getElementById('level-box').innerText = `Level: 1`;
         this.isRunning = true;
-        this.start();
+        // Restart loop if it wasn't running
+        this.gameLoop();
     }
 
     shoot() {
-        const color = this.colors[Math.floor(Math.random() * this.colors.length)];
-        const speed = 10;
+        const color = this.colorQueue.shift();
+        this.refillQueue();
+        
+        const speed = 12;
         this.projectiles.push({
             x: this.canvas.width / 2,
             y: this.canvas.height / 2,
@@ -121,7 +133,7 @@ class Game {
     }
 
     spawnMarble() {
-        const spawnChance = 0.01 + (this.level * 0.005);
+        const spawnChance = 0.005 + (this.level * 0.002); 
         if (Math.random() < spawnChance) {
             const color = this.colors[Math.floor(Math.random() * this.colors.length)];
             this.marbles.push({
@@ -137,7 +149,6 @@ class Game {
 
         this.spawnMarble();
 
-        // Update marbles
         for (let i = 0; i < this.marbles.length; i++) {
             const m = this.marbles[i];
             m.pathIndex += 0.03 + (this.level * 0.002);
@@ -155,13 +166,11 @@ class Game {
             m.y = this.path[index1].y * (1 - t) + this.path[index2].y * t;
         }
 
-        // Update projectiles
         for (let i = this.projectiles.length - 1; i >= 0; i--) {
             const p = this.projectiles[i];
             p.x += p.vx;
             p.y += p.vy;
 
-            // Collision with marbles
             let hitIndex = -1;
             for (let j = 0; j < this.marbles.length; j++) {
                 const m = this.marbles[j];
@@ -185,39 +194,30 @@ class Game {
     }
 
     handleHit(index, color) {
-        // Insert the new color into the chain at the correct position
-        // We find the marble's position in the path and insert it
         this.marbles.splice(index, 0, {
             pathIndex: this.marbles[index].pathIndex,
             color: color,
             radius: 15
         });
-
         this.checkMatches(index);
     }
 
     checkMatches(index) {
-        // Check contiguous block around the inserted index
         let start = index;
         let end = index;
 
-        // Expand forward
         while (end + 1 < this.marbles.length && this.marbles[end + 1].color === this.marbles[index].color) {
             end++;
         }
-
-        // Expand backward
         while (start - 1 >= 0 && this.marbles[start - 1].color === this.marbles[index].color) {
             start--;
         }
 
         const count = end - start + 1;
         if (count >= 3) {
-            // Remove the block
             this.marbles.splice(start, count);
             this.score += count * 50;
             document.getElementById('score-box').innerText = `Score: ${this.score}`;
-
             if (this.score > this.level * 500) {
                 this.levelUp();
             }
@@ -240,7 +240,6 @@ class Game {
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw Path
         this.ctx.beginPath();
         this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
         this.ctx.lineWidth = 35;
@@ -252,17 +251,8 @@ class Game {
         }
         this.ctx.stroke();
 
-        // Draw Marbles
-        this.marbles.forEach(m => {
-            this.drawMarble(m.x, m.y, m.color, m.radius);
-        });
-
-        // Draw Projectiles
-        this.projectiles.forEach(p => {
-            this.drawMarble(p.x, p.y, p.color, p.radius);
-        });
-
-        // Draw Shooter
+        this.marbles.forEach(m => this.drawMarble(m.x, m.y, m.color, m.radius));
+        this.projectiles.forEach(p => this.drawMarble(p.x, p.y, p.color, p.radius));
         this.drawShooter();
     }
 
@@ -272,19 +262,14 @@ class Game {
         this.ctx.arc(x, y, radius, 0, Math.PI * 2);
         this.ctx.fillStyle = color;
         this.ctx.fill();
-        
-        // Glow effect
         this.ctx.shadowBlur = 15;
         this.ctx.shadowColor = color;
         this.ctx.stroke();
-        
-        // Shine
         const grad = this.ctx.createRadialGradient(x - radius/3, y - radius/3, radius/10, x, y, radius);
         grad.addColorStop(0, 'rgba(255,255,255,0.6)');
         grad.addColorStop(1, 'rgba(0,0,0,0.3)');
         this.ctx.fillStyle = grad;
         this.ctx.fill();
-        
         this.ctx.restore();
     }
 
@@ -295,14 +280,11 @@ class Game {
         this.ctx.save();
         this.ctx.translate(centerX, centerY);
         this.ctx.rotate(this.shooterAngle);
-
-        // Shooter body
         this.ctx.beginPath();
         this.ctx.moveTo(0, 0);
         this.ctx.lineTo(45, -18);
         this.ctx.lineTo(45, 18);
         this.ctx.closePath();
-        
         const grad = this.ctx.createLinearGradient(0, 0, 45, 0);
         grad.addColorStop(0, '#ffd700');
         grad.addColorStop(1, '#ff8c00');
@@ -311,10 +293,8 @@ class Game {
         this.ctx.strokeStyle = '#000';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
-
         this.ctx.restore();
 
-        // Center point
         this.ctx.beginPath();
         this.ctx.arc(centerX, centerY, 25, 0, Math.PI * 2);
         this.ctx.fillStyle = '#222';
@@ -322,6 +302,14 @@ class Game {
         this.ctx.strokeStyle = '#ffd700';
         this.ctx.lineWidth = 4;
         this.ctx.stroke();
+
+        // --- COLOR INDICATOR ---
+        if (this.colorQueue && this.colorQueue.length >= 2) {
+            // Current color
+            this.drawMarble(centerX + 40, centerY - 40, this.colorQueue[0], 12);
+            // Next color
+            this.drawMarble(centerX + 40, centerY + 40, this.colorQueue[1], 12);
+        }
     }
 
     gameLoop() {
