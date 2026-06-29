@@ -105,7 +105,7 @@ class Game {
         this.score = 0;
         this.currentLevel = 1;
         this.isRunning = true;
-        document.getElementById('game-over-menu').classList.remove('hidden');
+        document.getElementById('game-over-menu').classList.add('hidden');
         this.gameLoop();
     }
 
@@ -260,16 +260,16 @@ class Player {
 
         this.vy += this.gravity;
 
-        if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && this.grounded) {
-            this.vy = this.jumpForce;
-            this.grounded = false;
-        }
-
         this.x += this.vx;
         this.checkCollision(map, 'x');
         
         this.y += this.vy;
         this.checkCollision(map, 'y');
+
+        if ((keys['Space'] || keys['ArrowUp'] || keys['KeyW']) && this.grounded) {
+            this.vy = this.jumpForce;
+            this.grounded = false;
+        }
     }
 
     checkCollision(map, axis) {
