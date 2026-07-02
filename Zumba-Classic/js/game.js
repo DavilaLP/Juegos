@@ -152,7 +152,16 @@ class Game {
 
         for (let i = 0; i < this.marbles.length; i++) {
             const m = this.marbles[i];
-            m.pathIndex += 0.03 + (this.level * 0.002);
+            const speed = 0.03 + (this.level * 0.002);
+            m.pathIndex += speed;
+
+            if (i > 0) {
+                const prev = this.marbles[i - 1];
+                const spacing = 2.0;
+                if (m.pathIndex > prev.pathIndex - spacing) {
+                    m.pathIndex = prev.pathIndex - spacing;
+                }
+            }
             
             if (m.pathIndex >= this.path.length - 1) {
                 this.gameOver();
