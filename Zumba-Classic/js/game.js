@@ -43,14 +43,15 @@ class Game {
             const mouseY = e.clientY - rect.top;
             this.shooterAngle = Math.atan2(mouseY - this.canvas.height / 2, mouseX - this.canvas.width / 2);
         });
-
+ 
         this.canvas.addEventListener('mousedown', () => {
             if (this.isRunning) this.shoot();
         });
-
+ 
         document.getElementById('start-btn').addEventListener('click', () => this.start());
         document.getElementById('restart-btn').addEventListener('click', () => this.reset());
-
+        document.getElementById('next-level-btn').addEventListener('click', () => this.startNextLevel());
+ 
         const shootBtn = document.getElementById('shoot-btn');
         if (shootBtn) {
             shootBtn.addEventListener('touchstart', (e) => {
@@ -59,6 +60,7 @@ class Game {
             });
         }
     }
+
 
     createPath() {
         this.path = [];
@@ -152,14 +154,25 @@ class Game {
 
         for (let i = 0; i < this.marbles.length; i++) {
             const m = this.marbles[i];
-            const speed = 0.03 + (this.level * 0.002);
+            const speed = 0.06 + (this.level * 0.01);
             m.pathIndex += speed;
 
             if (i > 0) {
                 const prev = this.marbles[i - 1];
-                const spacing = 2.0;
-                if (m.pathIndex > prev.pathIndex - spacing) {
-                    m.pathIndex = prev.pathIndex - spacing;
+                
+                // Calculate dynamic spacing based on the current radius to keep marbles touching
+                // The path is a spiral: distance per index varies.
+                const currentPoint = this.path[Math.floor(m.pathIndex)] || this.path[0];
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const r = Math.sqrt(Math.pow(currentPoint.x - centerX, 2) + Math.pow(currentPoint.y - centerY, 2));
+                
+                // Approximate distance per index: sqrt((r * angleStep)^2 + deltaRadius^2)
+                const distPerIndex = Math.sqrt(Math.pow(r * 0.05, 2) + Math.pow(0.8, 2));
+                const requiredSpacing = 30 / distPerIndex; // 30 is roughly the marble diameter
+                
+                if (m.pathIndex > prev.pathIndex - requiredSpacing) {
+                    m.pathIndex = prev.pathIndex - requiredSpacing;
                 }
             }
             
@@ -204,8 +217,9 @@ class Game {
     }
 
     handleHit(index, color) {
+        const hitMarble = this.marbles[index];
         this.marbles.splice(index, 0, {
-            pathIndex: this.marbles[index].pathIndex,
+            pathIndex: hitMarble.pathIndex + 0.1, // Slight offset to prevent instant overlap bug
             color: color,
             radius: 15
         });
@@ -244,8 +258,24 @@ class Game {
     }
 
     levelUp() {
+        this.isRunning = false;
+        if (this.level >= 10) {
+            document.getElementById('game-over-menu').classList.remove('hidden');
+            document.querySelector('#game-over-menu h1').innerText = '¡VICTORIA TOTAL!';
+            document.getElementById('final-score').innerText = `Puntuación Final: ${this.score}`;
+            return;
+        }
+        document.getElementById('level-win-menu').classList.remove('hidden');
+    }
+ 
+    startNextLevel() {
         this.level++;
+        document.getElementById('level-win-menu').classList.add('hidden');
         document.getElementById('level-box').innerText = `Level: ${this.level}`;
+        this.marbles = [];
+        this.projectiles = [];
+        this.isRunning = true;
+        this.gameLoop();
     }
 
     draw() {
