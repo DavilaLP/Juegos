@@ -104,11 +104,12 @@ class Game {
         this.refillQueue();
         this.createPath();
         document.getElementById('game-over-menu').classList.add('hidden');
+        document.getElementById('start-menu').classList.add('hidden');
+        document.getElementById('mobile-controls').classList.remove('hidden');
         document.getElementById('final-score').innerText = `Score: ${this.score}`;
         document.getElementById('score-box').innerText = `Score: 0`;
         document.getElementById('level-box').innerText = `Level: 1`;
         this.isRunning = true;
-        // Restart loop if it wasn't running
         this.gameLoop();
     }
 
@@ -228,6 +229,7 @@ class Game {
         this.isRunning = false;
         this.isGameOver = true;
         document.getElementById('game-over-menu').classList.remove('hidden');
+        document.getElementById('mobile-controls').classList.add('hidden');
         document.getElementById('final-score').innerText = `Score: ${this.score}`;
         if (this.bgMusic) this.bgMusic.pause();
     }
