@@ -293,8 +293,16 @@ class Game {
         this.ctx.strokeStyle = '#000';
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
+ 
+        // --- COLOR INDICATOR ---
+        if (this.colorQueue && this.colorQueue.length >= 2) {
+            // Current color - In the mouth
+            this.drawMarble(40, 0, this.colorQueue[0], 12);
+            // Next color - On the back
+            this.drawMarble(-30, 0, this.colorQueue[1], 12);
+        }
         this.ctx.restore();
-
+ 
         this.ctx.beginPath();
         this.ctx.arc(centerX, centerY, 25, 0, Math.PI * 2);
         this.ctx.fillStyle = '#222';
@@ -302,15 +310,8 @@ class Game {
         this.ctx.strokeStyle = '#ffd700';
         this.ctx.lineWidth = 4;
         this.ctx.stroke();
-
-        // --- COLOR INDICATOR ---
-        if (this.colorQueue && this.colorQueue.length >= 2) {
-            // Current color
-            this.drawMarble(centerX + 40, centerY - 40, this.colorQueue[0], 12);
-            // Next color
-            this.drawMarble(centerX + 40, centerY + 40, this.colorQueue[1], 12);
-        }
     }
+
 
     gameLoop() {
         if (!this.isRunning) return;
