@@ -1,0 +1,268 @@
+:root {
+    --primary: #ffcc00;
+    --secondary: #4caf50;
+    --accent: #ff5722;
+    --bg-color: #87ceeb;
+    --text-color: #ffffff;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+    --panel-bg: rgba(0, 0, 0, 0.6);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #222;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 1280px;
+    max-height: 720px;
+    background-color: var(--bg-color);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.hud-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.player-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.health-bar-container {
+    width: 200px;
+    height: 25px;
+    background: #444;
+    border: 4px solid #fff;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 0 var(--shadow-color);
+}
+
+.health-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    transition: width 0.3s ease;
+}
+
+.lives-container {
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 2px black);
+}
+
+.inventory {
+    display: flex;
+    gap: 15px;
+    background: var(--panel-bg);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 3px solid var(--primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.4);
+}
+
+.inv-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    font-weight: 800;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.info-item {
+    font-size: 1.2rem;
+}
+
+/* OVERLAYS */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    transition: opacity 0.4s;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.menu-content {
+    text-align: center;
+    background: linear-gradient(135deg, #5cacee, #2a52be);
+    padding: 50px;
+    border-radius: 40px;
+    border: 8px solid #fff;
+    box-shadow: 0 20px 0 #1a3a8c, 0 30px 50px rgba(0,0,0,0.5);
+    max-width: 600px;
+}
+
+.logo-container {
+    margin-bottom: 40px;
+}
+
+.game-title {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 5rem;
+    color: var(--primary);
+    text-shadow: 6px 6px 0 #000, 0 0 20px rgba(255,204,0,0.5);
+    line-height: 0.9;
+    margin: 0;
+}
+
+.highlight {
+    color: #fff;
+    -webkit-text-stroke: 2px var(--primary);
+}
+
+.subtitle {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-top: 10px;
+}
+
+.menu-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+.btn-cartoon {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 2rem;
+    padding: 15px 60px;
+    cursor: pointer;
+    background: var(--primary);
+    color: #000;
+    border: 4px solid #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 0 #b8860b;
+    transition: all 0.1s;
+    text-transform: uppercase;
+}
+
+.btn-cartoon:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.btn-cartoon:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #b8860b;
+}
+
+/* MOBILE CONTROLS */
+#mobile-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.d-pad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.horizontal-ctrls {
+    display: flex;
+    gap: 10px;
+}
+
+.ctrl-btn, .action-btn {
+    width: 65px;
+    height: 65px;
+    background: rgba(255, 255, 255, 0.3);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.3);
+}
+
+.action-btns {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+}
+
+.action-btn {
+    width: 80px;
+    height: 80px;
+    font-family: 'Luckiest Guy', cursive;
+}
+
+.action-btn.jump { background: #4caf50; }
+.action-btn.attack { background: #f44336; }
+.action-btn.interact { background: #ffeb3b; color: #000; }
+
+.hidden { display: none !important; }
