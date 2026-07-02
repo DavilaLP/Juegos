@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Galaxy Defender | Nova-X</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- HUD -->
+        <div id="hud" class="hidden">
+            <div class="hud-top">
+                <div class="stat-group">
+                    <div class="stat-label">SCORE</div>
+                    <div id="score" class="stat-value">0</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-label">LEVEL</div>
+                    <div id="level" class="stat-value">1</div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-label">CREDITS</div>
+                    <div id="credits" class="stat-value">0</div>
+                </div>
+            </div>
+            
+            <div class="hud-bottom">
+                <div class="health-container">
+                    <div class="health-bar-bg">
+                        <div id="health-bar" class="health-bar-fill"></div>
+                    </div>
+                    <div class="health-text">HP: <span id="hp-value">100</span>/100</div>
+                </div>
+                <div class="shield-container">
+                    <div class="shield-bar-bg">
+                        <div id="shield-bar" class="shield-bar-fill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MENÚ PRINCIPAL -->
+        <div id="main-menu" class="overlay">
+            <div class="menu-content">
+                <h1 class="game-title">GALAXY<br><span class="glow-text">DEFENDER</span></h1>
+                <div class="menu-btns">
+                    <button id="play-btn" class="btn-neon">JUGAR</button>
+                    <button id="options-btn" class="btn-neon">CONFIGURACIÓN</button>
+                    <button id="exit-btn" class="btn-neon">SALIR</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIENDA / MEJORAS -->
+        <div id="shop-menu" class="overlay hidden">
+            <div class="shop-content">
+                <h2 class="shop-title">SISTEMAS DE MEJORA</h2>
+                <div class="shop-grid" id="shop-items">
+                    <!-- Items will be injected by JS -->
+                </div>
+                <button id="next-level-btn" class="btn-neon">LANZAR MISIÓN</button>
+            </div>
+        </div>
+
+        <!-- GAME OVER -->
+        <div id="game-over-menu" class="overlay hidden">
+            <div class="menu-content">
+                <h1 class="game-title gameOver">MISSION<br><span class="glow-text">FAILED</span></h1>
+                <p id="final-stats">Puntaje Final: 0</p>
+                <button id="restart-btn" class="btn-neon">REINTENTAR</button>
+            </div>
+        </div>
+
+        <!-- PAUSA -->
+        <div id="pause-menu" class="overlay hidden">
+            <div class="menu-content">
+                <h1 class="game-title">PAUSA</h1>
+                <button id="resume-btn" class="btn-neon">CONTINUAR</button>
+                <button id="main-menu-btn" class="btn-neon">MENÚ PRINCIPAL</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/game.js"></script>
+</body>
+</html>
