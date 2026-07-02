@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Snake - Evolution</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="ui">
+            <div class="stat">Score: <span id="score">0</span></div>
+            <div class="stat">Best: <span id="best">0</span></div>
+        </div>
+        
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="start-menu" class="overlay">
+            <h1>NEON SNAKE</h1>
+            <p>Usa las flechas o desliza para moverte</p>
+            <button id="start-btn">INICIAR JUEGO</button>
+        </div>
+
+        <div id="game-over-menu" class="overlay hidden">
+            <h1>GAME OVER</h1>
+            <p>Puntaje Final: <span id="final-score">0</span></p>
+            <button id="restart-btn">REINTENTAR</button>
+        </div>
+
+        <div id="mobile-controls">
+            <div class="control-grid">
+                <div></div>
+                <button class="ctrl-btn" id="up">↑</button>
+                <div></div>
+                <button class="ctrl-btn" id="left">←</button>
+                <button class="ctrl-btn" id="down">↓</button>
+                <button class="ctrl-btn" id="right">→</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
+</body>
+</html>
