@@ -241,6 +241,12 @@ class GalaxyDefender {
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('hud').classList.remove('hidden');
         };
+        document.getElementById('options-btn').onclick = () => {
+            alert("SISTEMAS DE CONFIGURACIÓN\n\n- Sonido: 100%\n- Controles: WASD / Flechas\n- Resolución: Automática\n\n(En desarrollo)");
+        };
+        document.getElementById('exit-btn').onclick = () => {
+            window.location.href = '../index.html';
+        };
         document.getElementById('restart-btn').onclick = () => location.reload();
     }
 
