@@ -154,6 +154,18 @@ canvas {
     margin-bottom: 40px;
 }
 
+.main-logo {
+    width: 100%;
+    max-width: 400px;
+    filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5));
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
 .game-title {
     font-family: 'Luckiest Guy', cursive;
     font-size: 5rem;

@@ -31,6 +31,12 @@ class TreasureHunter {
             document.getElementById('main-menu').classList.add('hidden');
             document.getElementById('hud').classList.remove('hidden');
         };
+        document.getElementById('options-btn').onclick = () => {
+            alert("SISTEMAS DE CONFIGURACIÓN\n\n- Sonido: 100%\n- Controles: WASD / Flechas\n- Resolución: Automática\n\n(En desarrollo)");
+        };
+        document.getElementById('credits-btn').onclick = () => {
+            alert("TREASURE HUNTER\n\nDesarrollado por: Nova-X Studios\nArte: Cartoon Style\nMotor: Vanilla JS");
+        };
         document.getElementById('exit-btn').onclick = () => {
             window.location.href = '../index.html';
         };
