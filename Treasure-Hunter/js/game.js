@@ -442,4 +442,15 @@ class TreasureHunter {
     }
 }
 
-new TreasureHunter();
+// ... (all the classes stay the same)
+
+// At the end of the file, replace "new TreasureHunter();" with:
+
+window.addEventListener('DOMContentLoaded', () => {
+    try {
+        new TreasureHunter();
+        console.log("Treasure Hunter initialized successfully.");
+    } catch (error) {
+        console.error("Error initializing Treasure Hunter:", error);
+    }
+});
