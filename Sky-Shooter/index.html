@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-08">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sky Shooter | Mobile Ready</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;90.0&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id de="hud" class="hidden">
+            <div class="score-container">SCORE: <span id="score">0</span></div>
+        </div>
+
+        <div id="menu" class="overlay">
+            <h1 class="title">SKY<br>SHOOTER</h1>
+            <button id="start-btn" class="btn">JUGAR</button>
+        </div>
+
+        <div id="game-over" class="overlay hidden">
+            <h1 class="title">GAME OVER</h1>
+            <p>Score: <span id="final-score">0</span></p>
+            <button id="retry-btn" class="btn">REINTENTAR</button>
+        </div>
+    </div>
+    <script src="js/game.js"></script>
+</body>
+</html>

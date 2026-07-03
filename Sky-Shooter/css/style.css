@@ -1,0 +1,97 @@
+:root {
+    --primary: #00f2ff;
+    --bg: #00050a;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    touch-action: none;
+}
+
+body {
+    background: #000;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    font-family: 'Orbitron', sans-serif;
+}
+
+#game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    max-width: 500px;
+    max-height: 800px;
+    background: var(--bg);
+    overflow: hidden;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.hidden { display: none !important; }
+
+.title {
+    font-size: 3rem;
+    color: var(--primary);
+    text-align: center;
+    text-shadow: 0 0 20px var(--primary);
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 15px 40px;
+    font-size: 1.5rem;
+    background: transparent;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.3s;
+    box-shadow: 0 0 15px var(--primary);
+}
+
+.btn:active {
+    transform: scale(0.9);
+    background: var(--primary);
+    color: #000;
+}
+
+#hud {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.score-container {
+    color: var(--primary);
+    font-size: 1.5rem;
+    text-shadow: 0 0 10px var(--primary);
+}
