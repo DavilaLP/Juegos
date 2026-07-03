@@ -63,7 +63,7 @@ class Player extends Entity {
         this.fragments = 0;
         this.score = 0;
         this.facing = 1;
-        this.state = 'idle'; // idle, walk, jump, attack
+        this.state = 'idle';
         this.animFrame = 0;
         this.attackTimer = 0;
     }
@@ -138,27 +138,19 @@ class Player extends Entity {
     draw(ctx, cam) {
         ctx.save();
         ctx.translate(this.x - cam.x, this.y - cam.y);
-        
-        // Detailed Character Drawing (No simple rects)
         ctx.scale(this.facing, 1);
         
-        // Body/Shirt
         ctx.fillStyle = '#e67e22';
-        ctx.beginPath();
-        ctx.roundRect(-20, 10, 40, 30, 10);
-        ctx.fill();
+        ctx.fillRect(-20, 10, 40, 30);
         ctx.strokeStyle = '#d35400';
-        ctx.lineWidth = 2;
-        ctx.stroke();
+        ctx.strokeRect(-20, 10, 40, 30);
 
-        // Head
         ctx.fillStyle = '#ffdbac';
         ctx.beginPath();
         ctx.arc(0, 0, 15, 0, Math.PI * 2);
         ctx.fill();
         ctx.stroke();
 
-        // Hat (Explorer Hat)
         ctx.fillStyle = '#c2b280';
         ctx.beginPath();
         ctx.ellipse(0, -15, 25, 10, 0, 0, Math.PI * 2);
@@ -169,13 +161,11 @@ class Player extends Entity {
         ctx.fill();
         ctx.stroke();
 
-        // Legs (Animated)
         const walkOffset = this.state === 'walk' ? Math.sin(this.animFrame) * 10 : 0;
         ctx.fillStyle = '#5d4037';
         ctx.fillRect(-15, 40, 12, 15 + walkOffset);
         ctx.fillRect(3, 40, 12, 15 - walkOffset);
 
-        // Attack Effect
         if (this.state === 'attack') {
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 4;
@@ -183,7 +173,6 @@ class Player extends Entity {
             ctx.arc(20, 20, 30, -Math.PI/2, Math.PI/2);
             ctx.stroke();
         }
-
         ctx.restore();
     }
 }
@@ -198,16 +187,13 @@ class Enemy extends Entity {
         this.range = 100;
         this.startX = x;
     }
-
     update() {
         this.x += this.speed * this.dir;
         if (Math.abs(this.x - this.startX) > this.range) this.dir *= -1;
     }
-
     draw(ctx, cam) {
         ctx.save();
         ctx.translate(this.x - cam.x, this.y - cam.y);
-        
         if (this.type === 'snake') {
             ctx.fillStyle = '#2ecc71';
             ctx.beginPath();
@@ -222,7 +208,6 @@ class Enemy extends Entity {
             ctx.beginPath();
             ctx.ellipse(0, 0, 15, 10, 0, 0, Math.PI * 2);
             ctx.fill();
-            // Wings
             const wingY = Math.sin(Date.now() * 0.01) * 10;
             ctx.beginPath();
             ctx.moveTo(-15, 0); ctx.lineTo(-30, wingY); ctx.lineTo(-15, 10);
@@ -240,7 +225,7 @@ class Item {
     constructor(x, y, type) {
         this.x = x;
         this.y = y;
-        this.type = type; // coin, gem, key, fragment
+        this.type = type;
         this.width = 30;
         this.height = 30;
         this.collected = false;
@@ -249,7 +234,6 @@ class Item {
         if (this.collected) return;
         ctx.save();
         ctx.translate(this.x - cam.x, this.y - cam.y);
-        
         if (this.type === 'coin') {
             ctx.fillStyle = '#f1c40f';
             ctx.beginPath();
@@ -273,49 +257,38 @@ class Item {
     }
 }
 
-// GAME ENGINE
 class TreasureHunter {
     constructor() {
         this.canvas = document.getElementById('gameCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.resize();
         window.addEventListener('resize', () => this.resize());
-
         this.input = new Input();
         this.player = new Player(100, 100);
         this.camera = new Camera(this.canvas.width, this.canvas.height);
-        
         this.isRunning = false;
         this.score = 0;
         this.level = 1;
-        
         this.platforms = [];
         this.enemies = [];
         this.items = [];
         this.decorations = [];
-
         this.initUI();
         this.loadLevel(1);
         this.loop();
     }
-
     resize() {
         this.canvas.width = this.canvas.parentElement.clientWidth;
         this.canvas.height = this.canvas.parentElement.clientHeight;
         this.camera.width = this.canvas.width;
         this.camera.height = this.canvas.height;
     }
-
     loadLevel(lvl) {
         this.platforms = [];
         this.enemies = [];
         this.items = [];
         this.decorations = [];
-
-        // Floor
         this.platforms.push({ x: 0, y: 600, width: 5000, height: 120 });
-        
-        // Platforms
         const platformData = [
             {x: 300, y: 450, w: 200, h: 40},
             {x: 600, y: 350, w: 200, h: 40},
@@ -323,22 +296,13 @@ class TreasureHunter {
             {x: 1200, y: 300, w: 300, h: 40},
         ];
         platformData.forEach(p => this.platforms.push({ x: p.x, y: p.y, width: p.w, height: p.h }));
-
-        // Items
-        for(let i=0; i<20; i++) this.items.push(new Item(MathUtils.random(100, 2000), 550, 'coin'));
+        for(let i=0; i<20; i++) this.items.push(new Item(Utils.random(100, 2000), 550, 'coin'));
         this.items.push(new Item(1300, 250, 'fragment'));
-
-        // Enemies
         this.enemies.push(new Enemy(500, 560, 'snake'));
         this.enemies.push(new Enemy(1000, 560, 'snake'));
         this.enemies.push(new Enemy(700, 200, 'bat'));
-
-        // Decorations (Trees)
-        for(let i=0; i<15; i++) {
-            this.decorations.push({ x: MathUtils.random(0, 2000), y: 600, type: 'palm' });
-        }
+        for(let i=0; i<15; i++) this.decorations.push({ x: Utils.random(0, 2000), y: 600, type: 'palm' });
     }
-
     initUI() {
         document.getElementById('play-btn').onclick = () => {
             this.isRunning = true;
@@ -349,16 +313,11 @@ class TreasureHunter {
         document.getElementById('credits-btn').onclick = () => alert("Treasure Hunter - Nova-X Studios");
         document.getElementById('exit-btn').onclick = () => window.location.href = '../index.html';
     }
-
     update() {
         if (!this.isRunning) return;
-        
         this.player.update(this.input, this.platforms);
         this.camera.follow(this.player);
-
         this.enemies.forEach(e => e.update());
-        
-        // Item Collection
         this.items.forEach(item => {
             if (!item.collected && this.player.rectIntersect(this.player, item)) {
                 item.collected = true;
@@ -367,8 +326,6 @@ class TreasureHunter {
                 this.score += 10;
             }
         });
-
-        // Enemy Collision
         this.enemies.forEach(e => {
             if (this.player.rectIntersect(this.player, e)) {
                 if (this.player.state === 'attack') {
@@ -380,62 +337,44 @@ class TreasureHunter {
             }
         });
         this.enemies = this.enemies.filter(e => !e.dead);
-
-        // HUD Update
         document.getElementById('score-val').innerText = this.score;
         document.getElementById('coins').innerText = this.player.coins;
         document.getElementById('fragments').innerText = `${this.player.fragments}/5`;
         document.getElementById('health-bar').style.width = `${this.player.health}%`;
     }
-
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        // Parallax Background (Sky & Clouds)
         this.ctx.fillStyle = '#87ceeb';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        
         this.ctx.fillStyle = 'rgba(255,255,255,0.5)';
         for(let i=0; i<5; i++) {
             this.ctx.beginPath();
             this.ctx.arc((i * 400 - this.camera.x * 0.2) % (this.canvas.width + 400), 100 + i*50, 50, 0, Math.PI*2);
             this.ctx.fill();
         }
-
-        // Decorations
         this.decorations.forEach(d => {
             this.ctx.save();
             this.ctx.translate(d.x - this.camera.x, d.y);
             if (d.type === 'palm') {
-                ctx.fillStyle = '#5d4037';
-                ctx.fillRect(-10, -100, 20, 100);
-                ctx.fillStyle = '#2ecc71';
-                ctx.beginPath();
-                ctx.arc(0, -100, 50, 0, Math.PI*2);
-                ctx.fill();
+                this.ctx.fillStyle = '#5d4037';
+                this.ctx.fillRect(-10, -100, 20, 100);
+                this.ctx.fillStyle = '#2ecc71';
+                this.ctx.beginPath();
+                this.ctx.arc(0, -100, 50, 0, Math.PI*2);
+                this.ctx.fill();
             }
-            ctx.restore();
+            this.ctx.restore();
         });
-
-        // Platforms
         this.ctx.fillStyle = '#8B4513';
         this.platforms.forEach(p => {
             this.ctx.fillRect(p.x - this.camera.x, p.y - this.camera.y, p.width, p.height);
             this.ctx.strokeStyle = '#5D2E0C';
             this.ctx.strokeRect(p.x - this.camera.x, p.y - this.camera.y, p.width, p.height);
         });
-
-        // Items
         this.items.forEach(item => item.draw(this.ctx, this.camera));
-        
-        // Enemies
         this.enemies.forEach(e => e.draw(this.ctx, this.camera));
-
-        // Player
         this.player.draw(this.ctx, this.camera);
     }
-
-// ... (Existing classes and methods)
     loop() {
         this.update();
         this.draw();
@@ -443,11 +382,6 @@ class TreasureHunter {
     }
 }
 
-// Initializing the game immediately
-try {
-    const game = new TreasureHunter();
-    console.log("Treasure Hunter initialized successfully.");
-} catch (error) {
-    console.error("Error initializing Treasure Hunter:", error);
-}
-
+window.onload = () => {
+    new TreasureHunter();
+};
