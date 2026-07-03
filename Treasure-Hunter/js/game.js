@@ -435,6 +435,7 @@ class TreasureHunter {
         this.player.draw(this.ctx, this.camera);
     }
 
+// ... (Existing classes and methods)
     loop() {
         this.update();
         this.draw();
@@ -442,15 +443,11 @@ class TreasureHunter {
     }
 }
 
-// ... (all the classes stay the same)
+// Initializing the game immediately
+try {
+    const game = new TreasureHunter();
+    console.log("Treasure Hunter initialized successfully.");
+} catch (error) {
+    console.error("Error initializing Treasure Hunter:", error);
+}
 
-// At the end of the file, replace "new TreasureHunter();" with:
-
-window.addEventListener('DOMContentLoaded', () => {
-    try {
-        new TreasureHunter();
-        console.log("Treasure Hunter initialized successfully.");
-    } catch (error) {
-        console.error("Error initializing Treasure Hunter:", error);
-    }
-});
