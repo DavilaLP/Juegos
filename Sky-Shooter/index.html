@@ -1,29 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-08">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sky Shooter | Mobile Ready</title>
+    <title>Sky Shooter | Nova-X</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;90.0&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
         
-        <div id de="hud" class="hidden">
+        <div id="hud" class="hidden">
             <div class="score-container">SCORE: <span id="score">0</span></div>
         </div>
 
-        <div id="menu" class="overlay">
-            <h1 class="title">SKY<br>SHOOTER</h1>
-            <button id="start-btn" class="btn">JUGAR</button>
+        <div id="main-menu" class="overlay">
+            <div class="menu-content">
+                <h1 class="game-title">SKY<br><span class="glow-text">SHOOTER</span></h1>
+                <div class="menu-btns">
+                    <button id="play-btn" class="btn-cartoon">¡JUGAR!</button>
+                    <button id="options-btn" class="btn-cartoon">CONFIGURACIÓN</button>
+                    <button id="credits-btn" class="btn-cartoon">CRÉDITOS</button>
+                    <button id="exit-btn" class="btn-cartoon">SALIR</button>
+                </div>
+            </div>
         </div>
 
         <div id="game-over" class="overlay hidden">
-            <h1 class="title">GAME OVER</h1>
-            <p>Score: <span id="final-score">0</span></p>
-            <button id="retry-btn" class="btn">REINTENTAR</button>
+            <div class="menu-content">
+                <h1 class="game-title">GAME OVER</h1>
+                <p>Score: <span id="final-score">0</span></p>
+                <button id="retry-btn" class="btn-cartoon">REINTENTAR</button>
+            </div>
         </div>
     </div>
     <script src="js/game.js"></script>

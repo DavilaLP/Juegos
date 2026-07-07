@@ -123,9 +123,9 @@ class SkyShooter {
         this.lastShot = 0;
         this.lastEnemySpawn = 0;
 
-        // Input
         this.targetX = this.player.x;
         this.targetY = this.player.y;
+
         this.setupInput();
         this.setupUI();
         this.loop();
@@ -154,6 +154,9 @@ class SkyShooter {
     setupUI() {
         document.getElementById('start-btn').onclick = () => this.start();
         document.getElementById('retry-btn').onclick = () => location.reload();
+        document.getElementById('options-btn').onclick = () => alert("Configuración en desarrollo");
+        document.getElementById('credits-btn').onclick = () => alert("Sky Shooter - Nova-X Studios");
+        document.getElementById('exit-btn').onclick = () => window.location.href = '../index.html';
     }
 
     start() {
@@ -161,6 +164,8 @@ class SkyShooter {
         this.score = 0;
         this.enemies = [];
         this.bullets = [];
+        this.player.x = this.canvas.width / 2;
+        this.player.y = this.canvas.height - 100;
         document.getElementById('main-menu').classList.add('hidden');
         document.getElementById('hud').classList.remove('hidden');
         document.getElementById('game-over').classList.add('hidden');
@@ -183,51 +188,47 @@ class SkyShooter {
 
         this.player.update(this.targetX, this.targetY, this.canvas.width, this.canvas.height);
 
-        // Auto shooting
-        const now = Date.now();
-        if (now - this.lastShot > 200) {
+        if (Date.now() - this.lastShot > 200) {
             this.bullets.push(new Bullet(this.player.x, this.player.y - 20));
-            this.lastShot = now;
+            this.lastShot = Date.now();
         }
 
-        // Bullets
-        for (let i = this.bullets.length - 1; i >= 0; i--) {
-            this.bullets[i].update();
-            if (this.bullets[i].y < 0) this.bullets.splice(i, 1);
-        }
-
-        // Enemies
         if (Date.now() - this.lastEnemySpawn > 1000) {
             this.enemies.push(new Enemy(this.canvas.width, this.canvas.height));
             this.lastEnemySpawn = Date.now();
         }
 
-        for (let i = this.enemies.length - 1; i >= 0; i--) {
-            const e = this.enemies[i];
-            e.update();
-
-            // Collision with bullets
-            for (let j = this.bullets.length - 1; j >= 0; j--) {
-                const b = this.bullets[j];
-                if (Utils.dist(e.x, e.y, b.x, b.y) < 25) {
+        for (let i = this.bullets.length - 1; i >= 0; i--) {
+            this.bullets[i].update();
+            if (this.bullets[i].y < 0) {
+                this.bullets.splice(i, 1);
+                continue;
+            }
+            for (let j = this.enemies.length - 1; j >= 0; j--) {
+                const e = this.enemies[j];
+                if (Utils.dist(this.bullets[i].x, this.bullets[i].y, e.x, e.y) < 25) {
                     this.spawnExplosion(e.x, e.y, e.color);
-                    this.enemies.splice(i, 1);
-                    this.bullets.splice(j, 1);
+                    this.enemies.splice(j, 1);
+                    this.bullets.splice(i, 1);
                     this.score += 10;
                     document.getElementById('score').innerText = this.score;
                     break;
                 }
             }
-
-            // Collision with player
-            if (e && Utils.dist(e.x, e.y, this.player.x, this.player.y) < 35) {
-                this.gameOver();
-            }
-
-            if (e && e.y > this.canvas.height) this.enemies.splice(i, 1);
         }
 
-        // Particles
+        for (let i = this.enemies.length - 1; i >= 0; i--) {
+            const e = this.enemies[i];
+            e.update();
+            if (e.y > this.canvas.height) {
+                this.enemies.splice(i, 1);
+                continue;
+            }
+            if (Utils.dist(e.x, e.y, this.player.x, this.player.y) < 35) {
+                this.gameOver();
+            }
+        }
+
         for (let i = this.particles.length - 1; i >= 0; i--) {
             this.particles[i].update();
             if (this.particles[i].life <= 0) this.particles.splice(i, 1);
@@ -238,8 +239,7 @@ class SkyShooter {
         this.ctx.fillStyle = '#00050a';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Stars
-        this.ctx.fillStyle = '#fff';
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
         for (let i = 0; i < 30; i++) {
             const x = (Math.sin(i * 123.4) * 0.5 + 0.5) * this.canvas.width;
             const y = ((Math.cos(i * 456.7) * 0.5 + 0.5) * this.canvas.height + Date.now() * 0.02) % this.canvas.height;
@@ -259,4 +259,6 @@ class SkyShooter {
     }
 }
 
-new SkyShooter();
+window.onload = () => {
+    new SkyShooter();
+};
